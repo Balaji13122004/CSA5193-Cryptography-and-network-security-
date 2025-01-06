@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+// Helper functions can be added for matrix construction and encryption
+void dummyPlayfair(char text[]) {
+    // This is a placeholder for Playfair encryption logic
+    for (int i = 0; text[i] != '\0'; i++) {
+        text[i] = toupper(text[i]);
+    }
+}
+
+int main() {
+    char text[100];
+
+    printf("Enter the plaintext: ");
+    fgets(text, sizeof(text), stdin);
+    text[strcspn(text, "\n")] = '\0'; // Remove newline character
+
+    dummyPlayfair(text); // Placeholder function
+    printf("Encrypted text: %s\n", text);
+
+    return 0;
+}
