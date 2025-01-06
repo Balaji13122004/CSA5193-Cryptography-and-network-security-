@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <string.h>
+
+// Placeholder for Hill cipher matrix-based encryption
+void dummyHill(char text[]) {
+    for (int i = 0; text[i] != '\0'; i++) {
+        text[i] = toupper(text[i]); // Placeholder logic
+    }
+}
+
+int main() {
+    char text[100];
+
+    printf("Enter the plaintext: ");
+    fgets(text, sizeof(text), stdin);
+    text[strcspn(text, "\n")] = '\0';
+
+    dummyHill(text); // Placeholder function
+    printf("Encrypted text: %s\n", text);
+
+    return 0;
+}
