@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MOD 26
+
+void hillCipherEncrypt(char *plaintext, int key[2][2], char *ciphertext) {
+    int len = strlen(plaintext);
+    int i, a, b;
+
+    for (i = 0; i < len; i += 2) {
+        a = plaintext[i] - 'A';
+        b = plaintext[i + 1] - 'A';
+
+        ciphertext[i] = ((key[0][0] * a + key[0][1] * b) % MOD) + 'A';
+        ciphertext[i + 1] = ((key[1][0] * a + key[1][1] * b) % MOD) + 'A';
+    }
+    ciphertext[len] = '\0';
+}
+
+int main() {
+    char plaintext[] = "MEETMEATUSUALPLACEATTENRATHERTHANEIGHTOCLOCK";
+    char ciphertext[100];
+    int key[2][2] = {{9, 4}, {5, 7}};
+
+    printf("Plaintext: %s\n", plaintext);
+    hillCipherEncrypt(plaintext, key, ciphertext);
+    printf("Ciphertext: %s\n", ciphertext);
+
+    return 0;
+}
