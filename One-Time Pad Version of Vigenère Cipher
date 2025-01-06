@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MOD 26
+
+void vigenereCipher(char *plaintext, int *key, char *ciphertext) {
+    int i, len = strlen(plaintext);
+
+    for (i = 0; i < len; i++) {
+        ciphertext[i] = ((plaintext[i] - 'A' + key[i]) % MOD) + 'A';
+    }
+    ciphertext[len] = '\0';
+}
+
+int main() {
+    char plaintext[] = "SENDMOREMONEY";
+    int key[] = {9, 0, 1, 7, 23, 15, 21, 14, 11, 11, 2, 8, 9};
+    char ciphertext[100];
+
+    printf("Plaintext: %s\n", plaintext);
+    vigenereCipher(plaintext, key, ciphertext);
+    printf("Ciphertext: %s\n", ciphertext);
+
+    return 0;
+}
