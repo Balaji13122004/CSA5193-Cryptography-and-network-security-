@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <ctype.h>
+
+int modInverse(int a, int m) {
+    for (int x = 1; x < m; x++) {
+        if ((a * x) % m == 1)
+            return x;
+    }
+    return -1;
+}
+
+void encrypt(char text[], int a, int b) {
+    for (int i = 0; text[i] != '\0'; i++) {
+        if (isalpha(text[i])) {
+            char base = isupper(text[i]) ? 'A' : 'a';
+            text[i] = ((a * (text[i] - base) + b) % 26) + base;
+        }
+    }
+}
+
+int main() {
+    char text[100];
+    int a = 5, b = 8; // Example values
+
+    printf("Enter the plaintext: ");
+    fgets(text, sizeof(text), stdin);
+    text[strcspn(text, "\n")] = '\0';
+
+    if (modInverse(a, 26) == -1) {
+        printf("Invalid key 'a'. It must be coprime with 26.\n");
+        return 1;
+    }
+
+    encrypt(text, a, b);
+    printf("Encrypted text: %s\n", text);
+
+    return 0;
+}
