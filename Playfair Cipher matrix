@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MATRIX_SIZE 5
+
+char playfairMatrix[MATRIX_SIZE][MATRIX_SIZE] = {
+    {'M', 'F', 'H', 'I', 'K'},
+    {'U', 'N', 'O', 'P', 'Q'},
+    {'Z', 'V', 'W', 'X', 'Y'},
+    {'E', 'L', 'A', 'R', 'G'},
+    {'D', 'S', 'T', 'B', 'C'}
+};
+
+void prepareText(char *text, char *preparedText) {
+    int i = 0, j = 0;
+    while (text[i] != '\0') {
+        if (isalpha(text[i])) {
+            preparedText[j++] = toupper(text[i] == 'J' ? 'I' : text[i]);
+        }
+        i++;
+    }
+    preparedText[j] = '\0';
+}
+
+void findPosition(char letter, int *row, int *col) {
+    for (int i = 0; i < MATRIX_SIZE; i++) {
+        for (int j = 0; j < MATRIX_SIZE; j++) {
+            if (playfairMatrix[i][j] == letter) {
+                *row = i;
+                *col = j;
+                return;
+            }
+        }
+    }
+}
+
+void encryptPair(char a, char b, char *result) {
+    int row1, col1, row2, col2;
+    findPosition(a, &row1, &col1);
+    findPosition(b, &row2, &col2);
+
+    if (row1 == row2) { // Same row
+        result[0] = playfairMatrix[row1][(col1 + 1) % MATRIX_SIZE];
+        result[1] = playfairMatrix[row2][(col2 + 1) % MATRIX_SIZE];
+    } else if (col1 == col2) { // Same column
+        result[0] = playfairMatrix[(row1 + 1) % MATRIX_SIZE][col1];
+        result[1] = playfairMatrix[(row2 + 1) % MATRIX_SIZE][col2];
+    } else { // Rectangle swap
+        result[0] = playfairMatrix[row1][col2];
+        result[1] = playfairMatrix[row2][col1];
+    }
+}
+
+void encryptPlayfair(char *text, char *cipherText) {
+    char preparedText[100];
+    prepareText(text, preparedText);
+
+    int length = strlen(preparedText);
+    if (length % 2 != 0) {
+        preparedText[length++] = 'X'; // Padding with 'X' if odd length
+        preparedText[length] = '\0';
+    }
+
+    int k = 0;
+    for (int i = 0; i < length; i += 2) {
+        char pair[2];
+        encryptPair(preparedText[i], preparedText[i + 1], pair);
+        cipherText[k++] = pair[0];
+        cipherText[k++] = pair[1];
+    }
+    cipherText[k] = '\0';
+}
+
+int main() {
+    char plaintext[100] = "Must see you over Cadogan West. Coming at once.";
+    char cipherText[100];
+
+    printf("Plaintext: %s\n", plaintext);
+    encryptPlayfair(plaintext, cipherText);
+    printf("Ciphertext: %s\n", cipherText);
+
+    return 0;
+}
