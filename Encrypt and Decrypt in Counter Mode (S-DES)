@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <string.h>
+
+#define BLOCK_SIZE 8
+
+// Dummy S-DES encryption function (replace with actual S-DES implementation)
+void sdesEncrypt(unsigned char *block, unsigned char *key, unsigned char *result) {
+    for (int i = 0; i < BLOCK_SIZE; i++) {
+        result[i] = block[i] ^ key[i % BLOCK_SIZE];
+    }
+}
+
+// Counter Mode Encryption
+void counterEncrypt(unsigned char *plaintext, int len, unsigned char *key, unsigned char *counter, unsigned char *ciphertext) {
+    unsigned char temp[BLOCK_SIZE];
+    for (int i = 0; i < len; i += BLOCK_SIZE) {
+        sdesEncrypt(counter, key, temp);
+        for (int j = 0; j < BLOCK_SIZE && i + j < len; j++) {
+            ciphertext[i + j] = plaintext[i + j] ^ temp[j];
+        }
+        counter[BLOCK_SIZE - 1]++;
+    }
+}
+
+// Counter Mode Decryption
+void counterDecrypt(unsigned char *ciphertext, int len, unsigned char *key, unsigned char *counter, unsigned char *plaintext) {
+    counterEncrypt(ciphertext, len, key, counter, plaintext);  // Same as encryption
+}
+
+int main() {
+    unsigned char plaintext[16] = {0x00, 0x01, 0x02, 0x04};
+    unsigned char key[BLOCK_SIZE] = {0x0F, 0xFD};
+    unsigned char counter[BLOCK_SIZE] = {0x00};  // Counter starts at 0
+    unsigned char ciphertext[16];
+    unsigned char decrypted[16];
+    int len = 4;
+
+    // Counter Mode Encryption
+    counterEncrypt(plaintext, len, key, counter, ciphertext);
+    printf("Ciphertext: ");
+    for (int i = 0; i < len; i++) printf("%02X ", ciphertext[i]);
+    printf("\n");
+
+    // Counter Mode Decryption
+    memset(counter, 0, BLOCK_SIZE);  // Reset Counter
+    counterDecrypt(ciphertext, len, key, counter, decrypted);
+    printf("Decrypted Text: ");
+    for (int i = 0; i < len; i++) printf("%02X ", decrypted[i]);
+    printf("\n");
+
+    return 0;
+}
