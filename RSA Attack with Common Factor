@@ -1,0 +1,20 @@
+#include <stdio.h>
+
+int gcd(int a, int b) {
+    return b == 0 ? a : gcd(b, a % b);
+}
+
+int main() {
+    int n = 3599;
+    int plaintext = 123;  // Assume this plaintext block
+    int common_factor = gcd(n, plaintext);
+
+    if (common_factor > 1) {
+        printf("Common factor found: %d\n", common_factor);
+        printf("This reveals one factor of n, which can help factorize n.\n");
+    } else {
+        printf("No useful common factor found.\n");
+    }
+
+    return 0;
+}
