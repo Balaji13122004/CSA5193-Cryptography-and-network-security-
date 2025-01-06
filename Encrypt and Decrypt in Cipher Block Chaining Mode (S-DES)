@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <string.h>
+
+#define BLOCK_SIZE 8
+
+// Function to XOR two blocks
+void xorBlocks(unsigned char *block1, unsigned char *block2, unsigned char *result) {
+    for (int i = 0; i < BLOCK_SIZE; i++) {
+        result[i] = block1[i] ^ block2[i];
+    }
+}
+
+// Dummy S-DES encryption function (replace with actual S-DES implementation)
+void sdesEncrypt(unsigned char *block, unsigned char *key, unsigned char *result) {
+    for (int i = 0; i < BLOCK_SIZE; i++) {
+        result[i] = block[i] ^ key[i % BLOCK_SIZE];
+    }
+}
+
+// CBC Mode Encryption
+void cbcEncrypt(unsigned char *plaintext, int len, unsigned char *key, unsigned char *iv, unsigned char *ciphertext) {
+    unsigned char temp[BLOCK_SIZE];
+    for (int i = 0; i < len; i += BLOCK_SIZE) {
+        xorBlocks(plaintext + i, iv, temp);
+        sdesEncrypt(temp, key, ciphertext + i);
+        memcpy(iv, ciphertext + i, BLOCK_SIZE);
+    }
+}
+
+// CBC Mode Decryption
+void cbcDecrypt(unsigned char *ciphertext, int len, unsigned char *key, unsigned char *iv, unsigned char *plaintext) {
+    unsigned char temp[BLOCK_SIZE];
+    for (int i = 0; i < len; i += BLOCK_SIZE) {
+        sdesEncrypt(ciphertext + i, key, temp);
+        xorBlocks(temp, iv, plaintext + i);
+        memcpy(iv, ciphertext + i, BLOCK_SIZE);
+    }
+}
+
+int main() {
+    unsigned char plaintext[16] = {0x00, 0x01, 0x02, 0x03};
+    unsigned char key[BLOCK_SIZE] = {0x0F, 0xFD};
+    unsigned char iv[BLOCK_SIZE] = {0xAA};  // Initialization vector
+    unsigned char ciphertext[16];
+    unsigned char decrypted[16];
+    int len = 4;
+
+    // CBC Encryption
+    cbcEncrypt(plaintext, len, key, iv, ciphertext);
+    printf("Ciphertext: ");
+    for (int i = 0; i < len; i++) printf("%02X ", ciphertext[i]);
+    printf("\n");
+
+    // CBC Decryption
+    memcpy(iv, (unsigned char[]){0xAA}, BLOCK_SIZE);  // Reset IV
+    cbcDecrypt(ciphertext, len, key, iv, decrypted);
+    printf("Decrypted Text: ");
+    for (int i = 0; i < len; i++) printf("%02X ", decrypted[i]);
+    printf("\n");
+
+    return 0;
+}
