@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void encrypt(char text[], char key[]) {
+    int textLen = strlen(text), keyLen = strlen(key), j = 0;
+
+    for (int i = 0; i < textLen; i++) {
+        if (isalpha(text[i])) {
+            char base = isupper(text[i]) ? 'A' : 'a';
+            text[i] = (text[i] - base + (tolower(key[j % keyLen]) - 'a')) % 26 + base;
+            j++;
+        }
+    }
+}
+
+int main() {
+    char text[100], key[100];
+
+    printf("Enter the plaintext: ");
+    fgets(text, sizeof(text), stdin);
+    text[strcspn(text, "\n")] = '\0';
+
+    printf("Enter the key: ");
+    fgets(key, sizeof(key), stdin);
+    key[strcspn(key, "\n")] = '\0';
+
+    encrypt(text, key);
+    printf("Encrypted text: %s\n", text);
+
+    return 0;
+}
